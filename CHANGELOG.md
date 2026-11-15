@@ -1,10 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.6.1
 
-First release from this repository. It continues Wandenberg Peixoto's and
-Rogério Carvalho Schneider's module, whose history is intact here; their
-repository has had no commit since May 2024.
+First release from this repository, carrying on from upstream's 0.6.0. It
+continues Wandenberg Peixoto's and Rogério Carvalho Schneider's module,
+whose history is intact here; their repository has had no commit since May
+2024.
 
 The licence is unchanged: GPL-3.0-or-later, which is upstream's choice and
 unusual for an nginx module.
