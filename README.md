@@ -30,20 +30,6 @@ EventSource stream, or over a WebSocket.
 The channels live in nginx's own shared memory, so there is no broker
 beside it and no backend holding a connection per subscriber.
 
-## Where this comes from
-
-Wandenberg Peixoto's and Rogério Carvalho Schneider's module, continued
-here with its history intact. Their repository has had no commit since May
-2024 and the FreeBSD port builds from it, which is the reason for this one.
-
-Nothing in the module itself needed changing so far. What is new is the
-scaffolding: a build against the releases the ports ship, the sanitizers,
-valgrind, CodeQL, a reload gate and a FreeBSD run.
-
-**This module is GPL-3.0-or-later**, unlike every other module in this
-organisation. That is upstream's choice and it is carried over unchanged;
-it matters for anyone redistributing an nginx built with it.
-
 ## Requirements
 
 nginx 1.28 or newer. Nothing beyond what nginx itself needs; the WebSocket
@@ -104,8 +90,10 @@ curl -s -N 'http://127.0.0.1:8080/sub/room1'
 
 ## Directives
 
-There are around forty, documented in `docs/`, which is upstream's own
-reference. The ones that decide the shape of a setup:
+36 of them, read out of the module's own command tables, so this is
+the whole set and the contexts are the ones the code enforces.
+
+The ones that decide the shape of a setup:
 
 |Directive|What it decides|
 |---|---|
@@ -114,14 +102,50 @@ reference. The ones that decide the shape of a setup:
 |`push_stream_subscriber`|a subscriber location: `streaming`, `polling`, `long-polling`, `eventsource` or `websocket`|
 |`push_stream_channels_path`|where the channel id comes from|
 |`push_stream_channels_statistics`|a statistics location|
-|`push_stream_message_ttl`|how long a message is kept for subscribers that arrive late|
+|`push_stream_message_ttl`|how long a message is kept for subscribers arriving late|
 |`push_stream_store_messages`|whether messages are kept at all|
 |`push_stream_authorized_channels_only`|refuse subscribers to channels no publisher created|
 
-The limits (`push_stream_max_number_of_channels`,
-`push_stream_max_messages_stored_per_channel`,
-`push_stream_max_subscribers_per_channel` and the rest) belong in `http{}`,
-not in a location, and so do the ping settings.
+And all of them:
+
+|Directive|Context|Takes|
+|---|---|---|
+|`push_stream_allow_connections_to_events_channel`|http, server, location, if|1 argument|
+|`push_stream_allowed_origins`|http, server, location|1 argument|
+|`push_stream_authorized_channels_only`|http, server, location|1 argument|
+|`push_stream_channel_deleted_message_text`|http|1 argument|
+|`push_stream_channel_inactivity_time`|http|1 argument|
+|`push_stream_channel_info_on_publish`|http, server, location|1 argument|
+|`push_stream_channels_path`|http, server, location, if|1 argument|
+|`push_stream_channels_statistics`|location|no arguments|
+|`push_stream_events_channel_id`|http|1 argument|
+|`push_stream_footer_template`|http, server, location|1 argument|
+|`push_stream_header_template`|http, server, location|1 argument|
+|`push_stream_header_template_file`|http, server, location|1 argument|
+|`push_stream_last_event_id`|http, server, location, if|1 argument|
+|`push_stream_last_received_message_tag`|http, server, location, if|1 argument|
+|`push_stream_last_received_message_time`|http, server, location, if|1 argument|
+|`push_stream_longpolling_connection_ttl`|http, server, location|1 argument|
+|`push_stream_max_channel_id_length`|http|1 argument|
+|`push_stream_max_messages_stored_per_channel`|http|1 argument|
+|`push_stream_max_number_of_channels`|http|1 argument|
+|`push_stream_max_number_of_wildcard_channels`|http|1 argument|
+|`push_stream_max_subscribers_per_channel`|http|1 argument|
+|`push_stream_message_template`|http, server, location|1 argument|
+|`push_stream_message_ttl`|http|1 argument|
+|`push_stream_padding_by_user_agent`|http, server, location|1 argument|
+|`push_stream_ping_message_interval`|http, server, location|1 argument|
+|`push_stream_ping_message_text`|http|1 argument|
+|`push_stream_publisher`|location|no arguments, 1 argument|
+|`push_stream_shared_memory_size`|http|1 or 2 arguments|
+|`push_stream_store_messages`|http, server, location, if|1 argument|
+|`push_stream_subscriber`|location|no arguments, 1 argument|
+|`push_stream_subscriber_connection_ttl`|http, server, location|1 argument|
+|`push_stream_timeout_with_body`|http|1 argument|
+|`push_stream_user_agent`|http, server, location|1 argument|
+|`push_stream_websocket_allow_publish`|http, server, location|1 argument|
+|`push_stream_wildcard_channel_max_qtd`|http, server, location|1 argument|
+|`push_stream_wildcard_channel_prefix`|http|1 argument|
 
 ## Testing
 
