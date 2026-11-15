@@ -1,20 +1,35 @@
 ngx_addon_name=ngx_http_push_stream_module
-CORE_INCS="$CORE_INCS ${ngx_addon_dir}/src ${ngx_addon_dir}/include"
 
-if test -n "$ngx_module_link"; then
-    ngx_module_type=HTTP
-    ngx_module_name=${ngx_addon_name}
-    ngx_module_srcs="${ngx_addon_dir}/src/${ngx_addon_name}.c"
+# One translation unit: ngx_http_push_stream_module.c #includes the other
+# .c files, so only it is compiled.  They still belong in the dependency
+# list, or make will not rebuild after one of them changes.
+ngx_module_type=HTTP
+ngx_module_name=$ngx_addon_name
+ngx_module_incs="$ngx_addon_dir/src $ngx_addon_dir/include"
+ngx_module_srcs="$ngx_addon_dir/src/$ngx_addon_name.c"
+ngx_module_deps=" \
+	$ngx_addon_dir/include/ngx_http_push_stream_module.h \
+	$ngx_addon_dir/include/ngx_http_push_stream_module_ipc.h \
+	$ngx_addon_dir/include/ngx_http_push_stream_module_publisher.h \
+	$ngx_addon_dir/include/ngx_http_push_stream_module_setup.h \
+	$ngx_addon_dir/include/ngx_http_push_stream_module_subscriber.h \
+	$ngx_addon_dir/include/ngx_http_push_stream_module_utils.h \
+	$ngx_addon_dir/include/ngx_http_push_stream_module_version.h \
+	$ngx_addon_dir/include/ngx_http_push_stream_module_websocket.h \
+	$ngx_addon_dir/include/ngx_http_push_stream_rbtree_util.h \
+	$ngx_addon_dir/src/ngx_http_push_stream_module_setup.c \
+	$ngx_addon_dir/src/ngx_http_push_stream_module_ipc.c \
+	$ngx_addon_dir/src/ngx_http_push_stream_module_publisher.c \
+	$ngx_addon_dir/src/ngx_http_push_stream_module_subscriber.c \
+	$ngx_addon_dir/src/ngx_http_push_stream_module_utils.c \
+	$ngx_addon_dir/src/ngx_http_push_stream_module_websocket.c \
+	$ngx_addon_dir/src/ngx_http_push_stream_rbtree_util.c \
+	"
+ngx_module_libs=
 
-    . auto/module
-else
-    HTTP_MODULES="$HTTP_MODULES ${ngx_addon_name}"
-    NGX_ADDON_SRCS="$NGX_ADDON_SRCS ${ngx_addon_dir}/src/${ngx_addon_name}.c"
-fi
+. auto/module
 
 have=NGX_HTTP_HEADERS . auto/have
-. auto/feature
 
-#if not have sha1 or do not want to use WebSocket comment the lines bellow
-USE_SHA1=YES
+# WebSocket subscribers need a SHA-1, which nginx carries in its core.
 have=NGX_HAVE_SHA1 . auto/have
