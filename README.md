@@ -153,7 +153,13 @@ And all of them:
 ci/build.sh 1.30.6 /tmp/nginx-test
 TEST_NGINX_BINARY=/tmp/nginx-test/sbin/nginx prove -r t/
 ci/reload.sh /tmp/nginx-test/sbin/nginx
+ci/version.sh
 ```
+
+`ci/version.sh` holds the version in
+`include/ngx_http_push_stream_module_version.h` against `CHANGELOG.md`.
+The statistics handler sends it as the `X-Nginx-PushStream-Tag` response
+header, so a stale value goes out on every request.
 
 Unlike most modules here this one needs nothing but nginx to be exercised
 for real, so the suite publishes into channels and reads them back out of
