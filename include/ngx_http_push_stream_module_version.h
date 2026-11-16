@@ -26,8 +26,16 @@
 #ifndef NGX_HTTP_PUSH_STREAM_MODULE_VERSION_H_
 #define NGX_HTTP_PUSH_STREAM_MODULE_VERSION_H_
 
-static const ngx_str_t  NGX_HTTP_PUSH_STREAM_TAG = ngx_string("0.5.5");
-static const ngx_str_t  NGX_HTTP_PUSH_STREAM_COMMIT = ngx_string("3bc016f811d50374251960db091557571dfd7393");
+/*
+ * Kept in step with CHANGELOG.md by ci/version.sh, which the lint
+ * workflow runs.  Both reach the outside: the statistics handler sends
+ * them as the X-Nginx-PushStream-Tag and -Commit response headers, so a
+ * stale pair is published on every request.  The commit is left out
+ * rather than carrying upstream's: this repository is not that commit,
+ * and a wrong hash is worse than none.
+ */
+static const ngx_str_t  NGX_HTTP_PUSH_STREAM_TAG = ngx_string("0.6.2");
+static const ngx_str_t  NGX_HTTP_PUSH_STREAM_COMMIT = ngx_string("");
 
 
 #endif /* NGX_HTTP_PUSH_STREAM_MODULE_VERSION_H_ */
