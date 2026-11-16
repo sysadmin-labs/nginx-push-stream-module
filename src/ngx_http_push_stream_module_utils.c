@@ -1402,16 +1402,16 @@ ngx_http_push_stream_format_message(ngx_http_push_stream_channel_t *channel, ngx
     ngx_str_t *event_id = (message->event_id != NULL) ? message->event_id : &NGX_HTTP_PUSH_STREAM_EMPTY;
     ngx_str_t *event_type = (message->event_type != NULL) ? message->event_type : &NGX_HTTP_PUSH_STREAM_EMPTY;
 
-    ngx_sprintf(id, "%d%Z", message->id);
+    ngx_sprintf(id, "%i%Z", message->id);
     id_len = ngx_strlen(id);
 
     last = ngx_http_time(time, message->time);
     time_len = last - time;
 
-    ngx_sprintf(tag, "%d%Z", message->tag);
+    ngx_sprintf(tag, "%i%Z", message->tag);
     tag_len = ngx_strlen(tag);
 
-    ngx_sprintf(size, "%d%Z", text->len);
+    ngx_sprintf(size, "%uz%Z", text->len);
     size_len = ngx_strlen(size);
 
     len += template->qtd_channel * channel_id->len;
@@ -2105,7 +2105,7 @@ ngx_http_push_stream_parse_paddings(ngx_conf_t *cf,  ngx_str_t *paddings_by_user
 
         ngx_queue_insert_tail(paddings, &padding->queue);
 
-        ngx_conf_log_error(NGX_LOG_INFO, cf, 0, "push stream module: padding detected %V, header_min_len %d, message_min_len %d", &agent_rc->pattern, padding->header_min_len, padding->message_min_len);
+        ngx_conf_log_error(NGX_LOG_INFO, cf, 0, "push stream module: padding detected %V, header_min_len %ui, message_min_len %ui", &agent_rc->pattern, padding->header_min_len, padding->message_min_len);
 
         aux.data = aux.data + (captures[1] - captures[0] + 1);
         aux.len  = aux.len - (captures[1] - captures[0] + 1);
