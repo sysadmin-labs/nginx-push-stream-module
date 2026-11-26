@@ -4,6 +4,11 @@
 
 ### Fixed
 
+- The build no longer fails on GCC 15 with `assignment discards 'const'
+  qualifier`.  `ngx_strchr` casts its argument to `const char *` and GCC 15
+  carries that into the result; the statistics handler writes a terminator
+  into the channel id and now casts the pointer back explicitly.
+
 - CI: the Test::Nginx cache is now keyed by the Perl build, not just by
   the runner OS.  When the hosted image moved to Ubuntu 26.04 the cached
   `~/perl5` tree was restored against a new interpreter and every test

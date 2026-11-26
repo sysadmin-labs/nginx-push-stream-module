@@ -329,7 +329,10 @@ ngx_http_push_stream_channels_statistics_handler(ngx_http_request_t *r)
             return ngx_http_push_stream_send_only_header_response(r, NGX_HTTP_BAD_REQUEST, &NGX_HTTP_PUSH_STREAM_TOO_LARGE_CHANNEL_ID_MESSAGE);
         }
 
-        if ((pos = ngx_strchr(requested_channel->id->data, '*')) != NULL) {
+        /* the channel id is our own copy from the request path, and
+           ngx_strchr casts its argument to const, which GCC 15 carries
+           into the result; cast it back for the terminator below */
+        if ((pos = (char *) ngx_strchr(requested_channel->id->data, '*')) != NULL) {
             ngx_str_t *aux = NULL;
             if (pos != (char *) requested_channel->id->data) {
                 *pos = '\0';
